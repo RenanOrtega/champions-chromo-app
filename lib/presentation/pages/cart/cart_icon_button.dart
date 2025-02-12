@@ -8,7 +8,7 @@ class CartIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
-      builder: (context, cart, index) {
+      builder: (context, cart, child) {
         return Stack(
           children: [
             IconButton(
@@ -43,7 +43,7 @@ class CartIconButton extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              )
+              ),
           ],
         );
       },

@@ -18,6 +18,7 @@ class AlbumStickerListPage extends StatefulWidget {
 }
 
 class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
+  // Sample data - replace with your actual data source
   late List<Sticker> stickers;
 
   @override
@@ -30,178 +31,52 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
           number: 1,
           type: StickerType.comum,
           isCollected: true,
-          price: 1.00),
+          price: 2.0),
       Sticker(
           id: '2',
           number: 2,
           type: StickerType.comum,
           isCollected: false,
-          price: 1.00),
+          price: 2.0),
+      // Quadro
       Sticker(
           id: '3',
           number: 3,
-          type: StickerType.comum,
-          isCollected: true,
-          price: 1.00),
+          type: StickerType.quadro,
+          isCollected: false,
+          price: 4.0),
       Sticker(
-          id: '1',
+          id: '4',
           number: 4,
-          type: StickerType.comum,
-          isCollected: true,
-          price: 1.00),
-      Sticker(
-          id: '2',
-          number: 5,
-          type: StickerType.comum,
-          isCollected: false,
-          price: 1.00),
-      Sticker(
-          id: '3',
-          number: 6,
-          type: StickerType.comum,
-          isCollected: true,
-          price: 1.00),
-      Sticker(
-          id: '1',
-          number: 7,
-          type: StickerType.comum,
-          isCollected: true,
-          price: 1.00),
-      Sticker(
-          id: '2',
-          number: 8,
-          type: StickerType.comum,
-          isCollected: false,
-          price: 1.00),
-      Sticker(
-          id: '3',
-          number: 9,
-          type: StickerType.comum,
-          isCollected: true,
-          price: 1.00),
-      // Quadro
-      Sticker(
-          id: '4',
-          number: 10,
-          type: StickerType.quadro,
-          isCollected: false,
-          price: 3.00),
-      Sticker(
-          id: '5',
-          number: 11,
           type: StickerType.quadro,
           isCollected: true,
-          price: 3.00),
-      Sticker(
-          id: '4',
-          number: 12,
-          type: StickerType.quadro,
-          isCollected: false,
-          price: 3.00),
-      Sticker(
-          id: '5',
-          number: 13,
-          type: StickerType.quadro,
-          isCollected: true,
-          price: 3.00),
-      Sticker(
-          id: '4',
-          number: 14,
-          type: StickerType.quadro,
-          isCollected: false,
-          price: 3.00),
-      Sticker(
-          id: '5',
-          number: 15,
-          type: StickerType.quadro,
-          isCollected: true,
-          price: 3.00),
-      Sticker(
-          id: '4',
-          number: 16,
-          type: StickerType.quadro,
-          isCollected: false,
-          price: 3.00),
-      Sticker(
-          id: '5',
-          number: 17,
-          type: StickerType.quadro,
-          isCollected: true,
-          price: 3.00),
+          price: 4.0),
       // Legends
       Sticker(
-          id: '6',
-          number: 18,
+          id: '5',
+          number: 5,
           type: StickerType.legends,
           isCollected: false,
-          price: 4.00),
-      Sticker(
-          id: '7',
-          number: 19,
-          type: StickerType.legends,
-          isCollected: true,
-          price: 4.00),
+          price: 5.0),
       Sticker(
           id: '6',
-          number: 20,
-          type: StickerType.legends,
-          isCollected: false,
-          price: 4.00),
-      Sticker(
-          id: '7',
-          number: 21,
+          number: 6,
           type: StickerType.legends,
           isCollected: true,
-          price: 4.00),
+          price: 5.0),
       // A4
       Sticker(
-          id: '8',
-          number: 22,
+          id: '7',
+          number: 7,
           type: StickerType.a4,
           isCollected: false,
-          price: 5.00),
-      Sticker(
-          id: '9',
-          number: 23,
-          type: StickerType.a4,
-          isCollected: true,
-          price: 5.00),
+          price: 6.0),
       Sticker(
           id: '8',
-          number: 24,
-          type: StickerType.a4,
-          isCollected: false,
-          price: 5.00),
-      Sticker(
-          id: '9',
-          number: 25,
+          number: 8,
           type: StickerType.a4,
           isCollected: true,
-          price: 5.00),
-      Sticker(
-          id: '8',
-          number: 26,
-          type: StickerType.a4,
-          isCollected: false,
-          price: 5.00),
-      Sticker(
-          id: '9',
-          number: 27,
-          type: StickerType.a4,
-          isCollected: true,
-          price: 5.00),
-      Sticker(
-          id: '8',
-          number: 28,
-          type: StickerType.a4,
-          isCollected: false,
-          price: 5.00),
-      Sticker(
-          id: '9',
-          number: 29,
-          type: StickerType.a4,
-          isCollected: true,
-          price: 5.00),
+          price: 6.0),
     ];
   }
 
@@ -240,6 +115,7 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
                 title: const Text('Adicionar ao carrinho'),
                 onTap: () {
                   final cart = context.read<CartProvider>();
+                  print('STICKER ID: ${sticker.id}');
                   cart.addItem(
                     CartItem(
                       id: sticker.id,
@@ -252,12 +128,12 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Figurinha adicionada ao carrinho.'),
+                      content: Text('Figurinha adicionada ao carrinho'),
                       duration: Duration(seconds: 2),
                     ),
                   );
                 },
-              )
+              ),
             ],
           ),
         );
@@ -361,7 +237,7 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
           padding: const EdgeInsets.all(4),
           child: Container(
             decoration: BoxDecoration(
-              color: sticker.isCollected ? Colors.green[400] : Colors.grey[400],
+              color: sticker.isCollected ? Colors.green : Colors.grey,
               borderRadius: BorderRadius.circular(2),
             ),
             child: Center(
