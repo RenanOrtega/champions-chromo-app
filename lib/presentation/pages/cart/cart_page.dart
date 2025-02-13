@@ -22,8 +22,8 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeItem(String id) {
-    _items.removeWhere((item) => item.id == id);
+  void removeItem(String id, String albumName) {
+    _items.removeWhere((item) => item.id == id && item.albumName == albumName);
     notifyListeners();
   }
 
@@ -162,7 +162,8 @@ class CartPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  onPressed: () => cart.removeItem(item.id),
+                                  onPressed: () =>
+                                      cart.removeItem(item.id, item.albumName),
                                   icon: const Icon(Icons.close,
                                       color: Colors.red),
                                 ),
