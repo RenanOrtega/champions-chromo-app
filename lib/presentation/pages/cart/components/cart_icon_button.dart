@@ -1,0 +1,47 @@
+import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
+import 'package:champions_chromo_app/router/routes.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+class CartIconButton extends ConsumerWidget {
+  const CartIconButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cartItemCount = ref.watch(cartProvider).items.length;
+
+    return Stack(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.shopping_cart),
+          onPressed: () => context.go(AppRoutes.cart),
+        ),
+        if (cartItemCount > 0)
+          Positioned(
+            right: 8,
+            top: 8,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 16,
+                minHeight: 16,
+              ),
+              child: Text(
+                cartItemCount.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

@@ -1,11 +1,13 @@
-import 'package:champions_chromo_app/domain/entities/cart_item_entity.dart';
+import 'package:champions_chromo_app/domain/entities/cart/cart_item_entity.dart';
 import 'package:champions_chromo_app/domain/entities/sticker_entity.dart';
-import 'package:champions_chromo_app/presentation/pages/cart/cart_icon_button.dart';
-import 'package:champions_chromo_app/presentation/pages/cart/cart_page.dart';
+import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
+import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
+import 'package:champions_chromo_app/router/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class AlbumStickerListPage extends StatefulWidget {
+class AlbumStickerListPage extends ConsumerStatefulWidget {
   final String albumName;
 
   const AlbumStickerListPage({
@@ -14,18 +16,17 @@ class AlbumStickerListPage extends StatefulWidget {
   });
 
   @override
-  State<AlbumStickerListPage> createState() => _AlbumStickerListPageState();
+  ConsumerState<AlbumStickerListPage> createState() =>
+      _AlbumStickerListPageState();
 }
 
-class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
-  // Sample data - replace with your actual data source
+class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
   late List<Sticker> stickers;
 
   @override
   void initState() {
     super.initState();
     stickers = [
-      // Comuns
       Sticker(
           id: '1',
           number: 1,
@@ -38,7 +39,6 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
           type: StickerType.comum,
           isCollected: false,
           price: 2.0),
-      // Quadro
       Sticker(
           id: '3',
           number: 3,
@@ -51,7 +51,6 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
           type: StickerType.quadro,
           isCollected: true,
           price: 4.0),
-      // Legends
       Sticker(
           id: '5',
           number: 5,
@@ -64,7 +63,6 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
           type: StickerType.legends,
           isCollected: true,
           price: 5.0),
-      // A4
       Sticker(
           id: '7',
           number: 7,
@@ -80,7 +78,8 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
     ];
   }
 
-  void _showStickerOptions(BuildContext context, Sticker sticker) {
+  void _showStickerOptions(
+      BuildContext context, WidgetRef ref, Sticker sticker) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -114,17 +113,16 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
                 leading: const Icon(Icons.shopping_cart),
                 title: const Text('Adicionar ao carrinho'),
                 onTap: () {
-                  final cart = context.read<CartProvider>();
-                  print('STICKER ID: ${sticker.id}');
-                  cart.addItem(
-                    CartItem(
-                      id: sticker.id,
-                      stickerNumber: sticker.number,
-                      type: _getStickerTypeName(sticker.type),
-                      albumName: widget.albumName,
-                      price: sticker.price,
-                    ),
-                  );
+                  ref.read(cartProvider.notifier).addItem(
+                        CartItem(
+                          id: sticker.id,
+                          stickerNumber: sticker.number.toString(),
+                          type: _getStickerTypeName(sticker.type),
+                          albumName: widget.albumName,
+                          price: sticker.price,
+                          quantity: 1,
+                        ),
+                      );
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -158,12 +156,15 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go(AppRoutes.schools);
+          },
+        ),
         title: Text(
           widget.albumName,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: const [
@@ -200,10 +201,7 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
         GridView.builder(
@@ -227,7 +225,7 @@ class _AlbumStickerListPageState extends State<AlbumStickerListPage> {
 
   Widget _buildStickerItem(Sticker sticker) {
     return InkWell(
-      onTap: () => _showStickerOptions(context, sticker),
+      onTap: () => _showStickerOptions(context, ref, sticker),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),

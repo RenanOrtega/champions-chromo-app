@@ -1,7 +1,8 @@
 import 'package:champions_chromo_app/domain/entities/school_entity.dart';
-import 'package:champions_chromo_app/presentation/pages/albums/school_album_list_page.dart';
-import 'package:champions_chromo_app/presentation/pages/cart/cart_icon_button.dart';
+import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
+import 'package:champions_chromo_app/router/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SchoolListPage extends StatelessWidget {
   final List<School> schools = [
@@ -33,9 +34,7 @@ class SchoolListPage extends StatelessWidget {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        actions: const [
-          CartIconButton(),
-        ],
+        actions: const [CartIconButton()],
       ),
       body: Column(
         children: [
@@ -54,13 +53,8 @@ class SchoolListPage extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              SchoolAlbumListPage(schoolName: school.name),
-                        ),
-                      );
+                      context
+                          .go('${AppRoutes.albums}?schoolName=${school.name}');
                     },
                     child: Container(
                       decoration: BoxDecoration(

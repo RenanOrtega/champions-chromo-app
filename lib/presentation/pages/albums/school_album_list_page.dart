@@ -1,7 +1,8 @@
 import 'package:champions_chromo_app/domain/entities/album_entity.dart';
-import 'package:champions_chromo_app/presentation/pages/cart/cart_icon_button.dart';
-import 'package:champions_chromo_app/presentation/pages/stickers/album_sticker_list_page.dart';
+import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
+import 'package:champions_chromo_app/router/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SchoolAlbumListPage extends StatelessWidget {
   final String schoolName;
@@ -22,6 +23,12 @@ class SchoolAlbumListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go(AppRoutes.schools);
+          },
+        ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -36,9 +43,7 @@ class SchoolAlbumListPage extends StatelessWidget {
           ],
         ),
         centerTitle: true,
-        actions: const [
-          CartIconButton(),
-        ],
+        actions: const [CartIconButton()],
       ),
       body: Column(
         children: [
@@ -65,13 +70,8 @@ class SchoolAlbumListPage extends StatelessWidget {
                     ),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AlbumStickerListPage(albumName: album.name),
-                          ),
-                        );
+                        context.go(
+                            '${AppRoutes.stickers}?albumName=${album.name}');
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(12),
