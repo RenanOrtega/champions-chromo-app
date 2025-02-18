@@ -1,3 +1,4 @@
+import 'package:champions_chromo_app/presentation/pages/login/components/square_tile.dart';
 import 'package:champions_chromo_app/presentation/providers/api_provider.dart';
 import 'package:champions_chromo_app/presentation/providers/auth_provider.dart';
 import 'package:champions_chromo_app/router/routes.dart';
@@ -72,29 +73,37 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   width: 200,
                 ),
               ),
-              TextFormField(
-                controller: phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  hintText: 'Digite seu número de celular',
-                  prefixIcon: const Icon(Icons.phone),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: 'Digite seu número de celular',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 14,
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding:
+                    const EdgeInsets.only(top: 16.0, left: 20.0, right: 20.0),
                 child: SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 45,
                   child: ElevatedButton(
                     onPressed: () => {},
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        backgroundColor: Colors.blue),
+                        backgroundColor: Colors.lightBlue),
                     child: const Text(
                       'Entrar',
                       style: TextStyle(fontSize: 16, color: Colors.white),
@@ -102,56 +111,52 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15,
+              const SizedBox(
+                height: 50,
               ),
-              Text(
-                'Ou continue com',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Text(
+                        'Ou continue com',
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 0.5,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
-                height: 5,
+                height: 50,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  OutlinedButton(
-                    onPressed: () => _handleGoogleSignIn(),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Image.asset(
-                      'assets/images/google_icon.png',
-                      height: 20,
-                    ),
+                  SquareTile(
+                    svgPath: 'assets/svg/google.svg',
+                    onTap: () => _handleGoogleSignIn(),
                   ),
-                  const SizedBox(width: 16),
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )),
-                    child: const Icon(
-                      Icons.apple,
-                      size: 20,
-                    ),
-                  ),
+                  SizedBox(width: 25),
+                  SquareTile(
+                    svgPath: 'assets/svg/apple.svg',
+                    onTap: () {},
+                  )
                 ],
-              )
+              ),
             ],
           ),
         ),
