@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class CartIconButton extends ConsumerWidget {
-  const CartIconButton({super.key});
+  final Color color;
+  const CartIconButton(this.color, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -14,8 +15,12 @@ class CartIconButton extends ConsumerWidget {
     return Stack(
       children: [
         IconButton(
-          icon: const Icon(Icons.shopping_cart),
+          icon: Icon(
+            Icons.shopping_cart,
+            color: color,
+          ),
           onPressed: () => context.go(AppRoutes.cart),
+          padding: EdgeInsets.zero,
         ),
         if (cartItemCount > 0)
           Positioned(

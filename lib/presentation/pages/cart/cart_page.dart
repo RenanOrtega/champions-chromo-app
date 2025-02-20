@@ -15,25 +15,6 @@ class CartPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () {
-            context.go(AppRoutes.schools);
-          },
-        ),
-        title: const Text(
-          'Carrinho',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: cart.items.isEmpty
           ? Center(
               child: Column(
@@ -66,7 +47,10 @@ class CartPage extends ConsumerWidget {
                     onPressed: () {
                       context.go(AppRoutes.schools);
                     },
-                    icon: const Icon(Icons.add_shopping_cart),
+                    icon: const Icon(
+                      Icons.add_shopping_cart,
+                      color: Colors.black,
+                    ),
                     label: const Text('Continuar comprando'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -78,35 +62,89 @@ class CartPage extends ConsumerWidget {
                 ],
               ),
             )
-          : SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Row(
-                      children: [
-                        Text(
-                          '${cart.items.length} ${cart.items.length == 1 ? 'item' : 'itens'} no carrinho',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
+          : Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade700, Colors.blue.shade500],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    ),
+                  ),
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top,
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24, right: 10),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.arrow_back,
+                                      color: Colors.white),
+                                  onPressed: () {
+                                    context.go(AppRoutes.schools);
+                                  },
+                                ),
+                              ],
+                            ),
+                            Text(
+                              'Carrinho',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: cart.items.length,
-                      itemBuilder: (context, index) =>
-                          CartItemCard(item: cart.items[index]),
-                    ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        '${cart.items.length} ${cart.items.length == 1 ? 'item' : 'itens'} no carrinho',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
                   ),
-                  CartFooter(),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: cart.items.length,
+                    itemBuilder: (context, index) =>
+                        CartItemCard(item: cart.items[index]),
+                  ),
+                ),
+                CartFooter(),
+              ],
             ),
     );
   }
