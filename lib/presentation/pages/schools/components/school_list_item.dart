@@ -22,7 +22,8 @@ class SchoolListItem extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
-            context.go('${AppRoutes.albums}?schoolName=${school.name}');
+            context.go(
+                '${AppRoutes.albums}?schoolName=${school.name}&schoolId=${school.id}');
           },
           borderRadius: BorderRadius.circular(12),
           child: Container(

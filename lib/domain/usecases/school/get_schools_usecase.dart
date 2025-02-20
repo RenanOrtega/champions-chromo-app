@@ -2,11 +2,11 @@ import 'package:champions_chromo_app/domain/entities/school_entity.dart';
 import 'package:champions_chromo_app/domain/repositories/school_repository.dart';
 
 class GetSchoolsUseCase {
-  final SchoolRepository schoolRepository;
+  final SchoolRepository _repository;
 
-  GetSchoolsUseCase(this.schoolRepository);
+  GetSchoolsUseCase(this._repository);
 
   Future<List<School>> execute() async {
-    return await schoolRepository.getAllSchools();
+    return await _repository.getAllSchools();
   }
 }
