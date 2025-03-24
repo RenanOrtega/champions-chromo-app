@@ -1,7 +1,9 @@
 import 'package:champions_chromo_app/domain/entities/cart/cart_item_entity.dart';
+import 'package:champions_chromo_app/domain/entities/sticker_collection_entity.dart';
 import 'package:champions_chromo_app/domain/entities/sticker_entity.dart';
 import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
 import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
+import 'package:champions_chromo_app/presentation/providers/sticker_collection/sticker_collection_state_provider.dart';
 import 'package:champions_chromo_app/router/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,10 +11,12 @@ import 'package:go_router/go_router.dart';
 
 class AlbumStickerListPage extends ConsumerStatefulWidget {
   final String albumName;
+  final String albumId;
 
   const AlbumStickerListPage({
     super.key,
     required this.albumName,
+    required this.albumId,
   });
 
   @override
@@ -22,60 +26,82 @@ class AlbumStickerListPage extends ConsumerStatefulWidget {
 
 class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
   late List<Sticker> stickers;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    stickers = [
-      Sticker(
-          id: '1',
-          number: 1,
-          type: StickerType.comum,
-          isCollected: true,
-          price: 2.0),
-      Sticker(
-          id: '2',
-          number: 2,
-          type: StickerType.comum,
-          isCollected: false,
-          price: 2.0),
-      Sticker(
-          id: '3',
-          number: 3,
-          type: StickerType.quadro,
-          isCollected: false,
-          price: 4.0),
-      Sticker(
-          id: '4',
-          number: 4,
-          type: StickerType.quadro,
-          isCollected: true,
-          price: 4.0),
-      Sticker(
-          id: '5',
-          number: 5,
-          type: StickerType.legends,
-          isCollected: false,
-          price: 5.0),
-      Sticker(
-          id: '6',
-          number: 6,
-          type: StickerType.legends,
-          isCollected: true,
-          price: 5.0),
-      Sticker(
-          id: '7',
-          number: 7,
-          type: StickerType.a4,
-          isCollected: false,
-          price: 6.0),
-      Sticker(
-          id: '8',
-          number: 8,
-          type: StickerType.a4,
-          isCollected: true,
-          price: 6.0),
-    ];
+    _loadStickers();
+  }
+
+  Future<void> _loadStickers() async {
+    try {
+      await ref
+          .read(stickerCollectionProvider.notifier)
+          .getStickerCollectionByUserIdAndAlbumId('user123', widget.albumId);
+
+      final stickerCollectionState = ref.read(stickerCollectionProvider);
+
+      stickerCollectionState.whenData((collections) {
+        if (collections.isNotEmpty) {
+          final collection = collections.first;
+          final albumCollection = collection.albums.firstWhere(
+            (album) => album.albumId == widget.albumId,
+            orElse: () =>
+                AlbumCollection(albumId: widget.albumId, ownedStickers: []),
+          );
+
+          const totalStickers = 100;
+          const stickersPerType = totalStickers ~/ 4;
+
+          stickers = List.generate(totalStickers, (index) {
+            final stickerNumber = index + 1;
+            final isCollected =
+                albumCollection.ownedStickers.contains(stickerNumber);
+
+            StickerType type;
+            if (index < stickersPerType) {
+              type = StickerType.comum;
+            } else if (index < stickersPerType * 2) {
+              type = StickerType.quadro;
+            } else if (index < stickersPerType * 3) {
+              type = StickerType.legends;
+            } else {
+              type = StickerType.a4;
+            }
+
+            double price;
+            switch (type) {
+              case StickerType.comum:
+                price = 2.0;
+              case StickerType.quadro:
+                price = 4.0;
+              case StickerType.legends:
+                price = 5.0;
+              case StickerType.a4:
+                price = 6.0;
+            }
+
+            return Sticker(
+              id: stickerNumber.toString(),
+              number: stickerNumber,
+              type: type,
+              isCollected: isCollected,
+              price: price,
+            );
+          });
+
+          setState(() {
+            isLoading = false;
+          });
+        }
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+        stickers = [];
+      });
+    }
   }
 
   void _showStickerOptions(
@@ -335,20 +361,26 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildStickerSection('Comuns', StickerType.comum),
-                const SizedBox(height: 24),
-                _buildStickerSection('Quadro', StickerType.quadro),
-                const SizedBox(height: 24),
-                _buildStickerSection('Legends', StickerType.legends),
-                const SizedBox(height: 24),
-                _buildStickerSection('A4', StickerType.a4),
-              ],
-            ),
+            child: isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : stickers.isEmpty
+                    ? const Center(child: Text('Sem figurinhas disponíveis'))
+                    : ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          _buildStickerSection('Comuns', StickerType.comum),
+                          const SizedBox(height: 24),
+                          _buildStickerSection('Quadro', StickerType.quadro),
+                          const SizedBox(height: 24),
+                          _buildStickerSection('Legends', StickerType.legends),
+                          const SizedBox(height: 24),
+                          _buildStickerSection('A4', StickerType.a4),
+                        ],
+                      ),
           ),
-          _buildSummary(),
+          if (!isLoading && stickers.isNotEmpty) _buildSummary(),
         ],
       ),
     );

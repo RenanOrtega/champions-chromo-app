@@ -161,7 +161,8 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
             onTap: () {
               // Seleciona o álbum antes de navegar
               ref.read(selectedAlbumProvider.notifier).state = album;
-              context.go('${AppRoutes.stickers}?albumName=${album.name}');
+              context.go(
+                  '${AppRoutes.stickers}?albumName=${album.name}&albumId=${album.id}');
             },
             borderRadius: BorderRadius.circular(12),
             child: Container(

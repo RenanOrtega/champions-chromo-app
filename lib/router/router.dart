@@ -57,7 +57,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/stickers',
         builder: (context, state) => AlbumStickerListPage(
-            albumName: state.uri.queryParameters['albumName']!),
+            albumName: state.uri.queryParameters['albumName']!,
+            albumId: state.uri.queryParameters['albumId']!),
       ),
       GoRoute(
         path: '/cart',

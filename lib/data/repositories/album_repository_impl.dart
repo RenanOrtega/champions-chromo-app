@@ -10,12 +10,6 @@ class AlbumRepositoryImpl implements AlbumRepository {
   AlbumRepositoryImpl(this._dio);
 
   @override
-  Future<Album> getAlbumDetails(String albumId) {
-    // TODO: implement getAlbumDetails
-    throw UnimplementedError();
-  }
-
-  @override
   Future<List<Album>> getAlbumsBySchool(String schoolId) async {
     try {
       final response = await _dio.get('/album/schoolId/$schoolId');

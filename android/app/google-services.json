@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "963712589779",
+    "project_id": "champions-chromo-app",
+    "storage_bucket": "champions-chromo-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963712589779:android:f0323b9bfbabdd02e25926",
+        "android_client_info": {
+          "package_name": "com.example.champions_chromo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "963712589779-1hse34dtk6ovob8qsnqf731a3fhp7941.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSrzOt39ExYdwCy1am4vLX_iLile-uNYg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "963712589779-1hse34dtk6ovob8qsnqf731a3fhp7941.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

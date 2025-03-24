@@ -215,36 +215,33 @@ class _SchoolListPage extends ConsumerState<SchoolListPage> {
 
   Widget _buildFilterChip(String label, IconData icon,
       {bool isSelected = false}) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8, top: 8),
-      child: FilterChip(
-        label: Row(
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: isSelected ? Colors.white : Colors.blue.shade700,
+    return FilterChip(
+      label: Row(
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isSelected ? Colors.white : Colors.blue.shade700,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black87,
             ),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        selectedColor: Colors.blue.shade600,
-        selected: isSelected,
-        onSelected: (bool selected) {
-          HapticFeedback.selectionClick();
-          _toggleFavoritesFilter();
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-          side: BorderSide(color: Colors.blue.shade400),
-        ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white,
+      selectedColor: Colors.blue.shade600,
+      selected: isSelected,
+      onSelected: (bool selected) {
+        HapticFeedback.selectionClick();
+        _toggleFavoritesFilter();
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+        side: BorderSide(color: Colors.blue.shade400),
       ),
     );
   }

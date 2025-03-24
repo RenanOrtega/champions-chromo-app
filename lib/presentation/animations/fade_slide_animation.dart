@@ -4,10 +4,10 @@ class FadeSlideAnimation extends StatefulWidget {
   final Widget child;
   final int index;
   const FadeSlideAnimation({
-    Key? key,
+    super.key,
     required this.child,
     required this.index,
-  }) : super(key: key);
+  });
   @override
   State<FadeSlideAnimation> createState() => _FadeSlideAnimationState();
 }
