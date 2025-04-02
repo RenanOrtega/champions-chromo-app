@@ -1,0 +1,2 @@
+E:/dev/freelas/jefferson-figurinhas/champions-chromo-app/android/app/.cxx/Debug/4u5b6k4m/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/dev/freelas/jefferson-figurinhas/champions-chromo-app/android/app/.cxx/Debug/4u5b6k4m/armeabi-v7a/CMakeFiles/rebuild_cache.dir

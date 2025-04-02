@@ -11,10 +11,16 @@ class StickerCollection {
 
 class AlbumCollection {
   final String albumId;
-  final List<int> ownedStickers;
+  final List<int> ownedCommonStickers;
+  final List<int> ownedFrameStickers;
+  final List<int> ownedLegendStickers;
+  final List<int> ownedA4Stickers;
 
   AlbumCollection({
     required this.albumId,
-    this.ownedStickers = const [],
+    this.ownedCommonStickers = const [],
+    this.ownedFrameStickers = const [],
+    this.ownedLegendStickers = const [],
+    this.ownedA4Stickers = const [],
   });
 }

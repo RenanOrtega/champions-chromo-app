@@ -19,7 +19,11 @@ class StickerCollectionModel with _$StickerCollectionModel {
 class AlbumCollectionModel with _$AlbumCollectionModel {
   const factory AlbumCollectionModel({
     required String albumId,
-    required List<int> ownedStickers,
+    required List<int> ownedCommonStickers,
+    required List<int> ownedFrameStickers,
+    required List<int> ownedLegendStickers,
+    required List<int> ownedA4Stickers,
+
   }) = _AlbumCollectionModel;
 
   factory AlbumCollectionModel.fromJson(Map<String, dynamic> json) =>

@@ -15,7 +15,10 @@ extension AlbumCollectionExtension on AlbumCollectionModel {
   AlbumCollection toDomain() {
     return AlbumCollection(
       albumId: albumId,
-      ownedStickers: ownedStickers,
+      ownedCommonStickers: ownedCommonStickers,
+      ownedFrameStickers: ownedFrameStickers,
+      ownedLegendStickers: ownedLegendStickers,
+      ownedA4Stickers: ownedA4Stickers,
     );
   }
 }

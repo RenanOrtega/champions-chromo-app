@@ -4,24 +4,24 @@ import 'package:champions_chromo_app/presentation/providers/sticker_collection/s
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final stickerCollectionProvider = StateNotifierProvider<
-    StickerCollectionNotifier, AsyncValue<List<StickerCollection>>>((ref) {
+    StickerCollectionNotifier, AsyncValue<StickerCollection>>((ref) {
   return StickerCollectionNotifier(
       ref.watch(getStickerCollectionUseCaseProvider));
 });
 
 class StickerCollectionNotifier
-    extends StateNotifier<AsyncValue<List<StickerCollection>>> {
+    extends StateNotifier<AsyncValue<StickerCollection>> {
   final GetStickerCollectionUseCase _getStickerCollectionUseCase;
 
   StickerCollectionNotifier(this._getStickerCollectionUseCase)
       : super(const AsyncValue.loading());
 
-  Future<void> getStickerCollectionByUserIdAndAlbumId(
-      String userId, String albumId) async {
+  Future<void> getByUserId( 
+      String userId) async {
     try {
       state = const AsyncValue.loading();
       final albums =
-          await _getStickerCollectionUseCase.execute(userId, albumId);
+          await _getStickerCollectionUseCase.execute(userId);
       state = AsyncValue.data(albums);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);

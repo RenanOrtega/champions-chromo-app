@@ -6,8 +6,8 @@ class GetStickerCollectionUseCase {
 
   GetStickerCollectionUseCase(this._repository);
 
-  Future<List<StickerCollection>> execute(String userId, String albumId) async {
-    return await _repository.getStickerCollectionByUserIdAndAlbumId(
-        userId, albumId);
+  Future<StickerCollection> execute(String userId) async {
+    return await _repository.getByUserId(
+        userId);
   }
 }

@@ -9,15 +9,15 @@ final albumsProvider =
 });
 
 class AlbumsNotifier extends StateNotifier<AsyncValue<List<Album>>> {
-  final GetAlbumsBySchoolUseCase _getAlbumsBySchoolUseCase;
+  final GetAlbumsBySchoolUseCase _getAlbumsBySchoolIdUseCase;
 
-  AlbumsNotifier(this._getAlbumsBySchoolUseCase)
+  AlbumsNotifier(this._getAlbumsBySchoolIdUseCase)
       : super(const AsyncValue.loading());
 
-  Future<void> getAlbumsBySchoolId(String schoolId) async {
+  Future<void> getAlbumsBySchoolIdId(String schoolId) async {
     try {
       state = const AsyncValue.loading();
-      final albums = await _getAlbumsBySchoolUseCase.execute(schoolId);
+      final albums = await _getAlbumsBySchoolIdUseCase.execute(schoolId);
       state = AsyncValue.data(albums);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);

@@ -155,16 +155,12 @@ class _SchoolListPage extends ConsumerState<SchoolListPage> {
                 children: [
                   Material(
                     color: Colors.transparent,
-                    child: InkWell(
-                      onTap: _toggleFavoritesFilter,
-                      borderRadius: BorderRadius.circular(30),
-                      child: _buildFilterChip(
-                        'Favoritas',
-                        showOnlyFavorites
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        isSelected: showOnlyFavorites,
-                      ),
+                    child: _buildFilterChip(
+                      'Favoritas',
+                      showOnlyFavorites
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      isSelected: showOnlyFavorites,
                     ),
                   ),
                 ],
@@ -217,6 +213,7 @@ class _SchoolListPage extends ConsumerState<SchoolListPage> {
       {bool isSelected = false}) {
     return FilterChip(
       label: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             icon,
@@ -239,10 +236,12 @@ class _SchoolListPage extends ConsumerState<SchoolListPage> {
         HapticFeedback.selectionClick();
         _toggleFavoritesFilter();
       },
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
         side: BorderSide(color: Colors.blue.shade400),
       ),
+      visualDensity: VisualDensity.compact,
     );
   }
 

@@ -222,7 +222,10 @@ AlbumCollectionModel _$AlbumCollectionModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AlbumCollectionModel {
   String get albumId => throw _privateConstructorUsedError;
-  List<int> get ownedStickers => throw _privateConstructorUsedError;
+  List<int> get ownedCommonStickers => throw _privateConstructorUsedError;
+  List<int> get ownedFrameStickers => throw _privateConstructorUsedError;
+  List<int> get ownedLegendStickers => throw _privateConstructorUsedError;
+  List<int> get ownedA4Stickers => throw _privateConstructorUsedError;
 
   /// Serializes this AlbumCollectionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -240,7 +243,12 @@ abstract class $AlbumCollectionModelCopyWith<$Res> {
           $Res Function(AlbumCollectionModel) then) =
       _$AlbumCollectionModelCopyWithImpl<$Res, AlbumCollectionModel>;
   @useResult
-  $Res call({String albumId, List<int> ownedStickers});
+  $Res call(
+      {String albumId,
+      List<int> ownedCommonStickers,
+      List<int> ownedFrameStickers,
+      List<int> ownedLegendStickers,
+      List<int> ownedA4Stickers});
 }
 
 /// @nodoc
@@ -260,16 +268,31 @@ class _$AlbumCollectionModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? albumId = null,
-    Object? ownedStickers = null,
+    Object? ownedCommonStickers = null,
+    Object? ownedFrameStickers = null,
+    Object? ownedLegendStickers = null,
+    Object? ownedA4Stickers = null,
   }) {
     return _then(_value.copyWith(
       albumId: null == albumId
           ? _value.albumId
           : albumId // ignore: cast_nullable_to_non_nullable
               as String,
-      ownedStickers: null == ownedStickers
-          ? _value.ownedStickers
-          : ownedStickers // ignore: cast_nullable_to_non_nullable
+      ownedCommonStickers: null == ownedCommonStickers
+          ? _value.ownedCommonStickers
+          : ownedCommonStickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      ownedFrameStickers: null == ownedFrameStickers
+          ? _value.ownedFrameStickers
+          : ownedFrameStickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      ownedLegendStickers: null == ownedLegendStickers
+          ? _value.ownedLegendStickers
+          : ownedLegendStickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      ownedA4Stickers: null == ownedA4Stickers
+          ? _value.ownedA4Stickers
+          : ownedA4Stickers // ignore: cast_nullable_to_non_nullable
               as List<int>,
     ) as $Val);
   }
@@ -283,7 +306,12 @@ abstract class _$$AlbumCollectionModelImplCopyWith<$Res>
       __$$AlbumCollectionModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String albumId, List<int> ownedStickers});
+  $Res call(
+      {String albumId,
+      List<int> ownedCommonStickers,
+      List<int> ownedFrameStickers,
+      List<int> ownedLegendStickers,
+      List<int> ownedA4Stickers});
 }
 
 /// @nodoc
@@ -300,16 +328,31 @@ class __$$AlbumCollectionModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? albumId = null,
-    Object? ownedStickers = null,
+    Object? ownedCommonStickers = null,
+    Object? ownedFrameStickers = null,
+    Object? ownedLegendStickers = null,
+    Object? ownedA4Stickers = null,
   }) {
     return _then(_$AlbumCollectionModelImpl(
       albumId: null == albumId
           ? _value.albumId
           : albumId // ignore: cast_nullable_to_non_nullable
               as String,
-      ownedStickers: null == ownedStickers
-          ? _value._ownedStickers
-          : ownedStickers // ignore: cast_nullable_to_non_nullable
+      ownedCommonStickers: null == ownedCommonStickers
+          ? _value._ownedCommonStickers
+          : ownedCommonStickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      ownedFrameStickers: null == ownedFrameStickers
+          ? _value._ownedFrameStickers
+          : ownedFrameStickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      ownedLegendStickers: null == ownedLegendStickers
+          ? _value._ownedLegendStickers
+          : ownedLegendStickers // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      ownedA4Stickers: null == ownedA4Stickers
+          ? _value._ownedA4Stickers
+          : ownedA4Stickers // ignore: cast_nullable_to_non_nullable
               as List<int>,
     ));
   }
@@ -319,25 +362,59 @@ class __$$AlbumCollectionModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AlbumCollectionModelImpl implements _AlbumCollectionModel {
   const _$AlbumCollectionModelImpl(
-      {required this.albumId, required final List<int> ownedStickers})
-      : _ownedStickers = ownedStickers;
+      {required this.albumId,
+      required final List<int> ownedCommonStickers,
+      required final List<int> ownedFrameStickers,
+      required final List<int> ownedLegendStickers,
+      required final List<int> ownedA4Stickers})
+      : _ownedCommonStickers = ownedCommonStickers,
+        _ownedFrameStickers = ownedFrameStickers,
+        _ownedLegendStickers = ownedLegendStickers,
+        _ownedA4Stickers = ownedA4Stickers;
 
   factory _$AlbumCollectionModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AlbumCollectionModelImplFromJson(json);
 
   @override
   final String albumId;
-  final List<int> _ownedStickers;
+  final List<int> _ownedCommonStickers;
   @override
-  List<int> get ownedStickers {
-    if (_ownedStickers is EqualUnmodifiableListView) return _ownedStickers;
+  List<int> get ownedCommonStickers {
+    if (_ownedCommonStickers is EqualUnmodifiableListView)
+      return _ownedCommonStickers;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_ownedStickers);
+    return EqualUnmodifiableListView(_ownedCommonStickers);
+  }
+
+  final List<int> _ownedFrameStickers;
+  @override
+  List<int> get ownedFrameStickers {
+    if (_ownedFrameStickers is EqualUnmodifiableListView)
+      return _ownedFrameStickers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ownedFrameStickers);
+  }
+
+  final List<int> _ownedLegendStickers;
+  @override
+  List<int> get ownedLegendStickers {
+    if (_ownedLegendStickers is EqualUnmodifiableListView)
+      return _ownedLegendStickers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ownedLegendStickers);
+  }
+
+  final List<int> _ownedA4Stickers;
+  @override
+  List<int> get ownedA4Stickers {
+    if (_ownedA4Stickers is EqualUnmodifiableListView) return _ownedA4Stickers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_ownedA4Stickers);
   }
 
   @override
   String toString() {
-    return 'AlbumCollectionModel(albumId: $albumId, ownedStickers: $ownedStickers)';
+    return 'AlbumCollectionModel(albumId: $albumId, ownedCommonStickers: $ownedCommonStickers, ownedFrameStickers: $ownedFrameStickers, ownedLegendStickers: $ownedLegendStickers, ownedA4Stickers: $ownedA4Stickers)';
   }
 
   @override
@@ -347,13 +424,24 @@ class _$AlbumCollectionModelImpl implements _AlbumCollectionModel {
             other is _$AlbumCollectionModelImpl &&
             (identical(other.albumId, albumId) || other.albumId == albumId) &&
             const DeepCollectionEquality()
-                .equals(other._ownedStickers, _ownedStickers));
+                .equals(other._ownedCommonStickers, _ownedCommonStickers) &&
+            const DeepCollectionEquality()
+                .equals(other._ownedFrameStickers, _ownedFrameStickers) &&
+            const DeepCollectionEquality()
+                .equals(other._ownedLegendStickers, _ownedLegendStickers) &&
+            const DeepCollectionEquality()
+                .equals(other._ownedA4Stickers, _ownedA4Stickers));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, albumId,
-      const DeepCollectionEquality().hash(_ownedStickers));
+  int get hashCode => Object.hash(
+      runtimeType,
+      albumId,
+      const DeepCollectionEquality().hash(_ownedCommonStickers),
+      const DeepCollectionEquality().hash(_ownedFrameStickers),
+      const DeepCollectionEquality().hash(_ownedLegendStickers),
+      const DeepCollectionEquality().hash(_ownedA4Stickers));
 
   /// Create a copy of AlbumCollectionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -376,7 +464,10 @@ class _$AlbumCollectionModelImpl implements _AlbumCollectionModel {
 abstract class _AlbumCollectionModel implements AlbumCollectionModel {
   const factory _AlbumCollectionModel(
       {required final String albumId,
-      required final List<int> ownedStickers}) = _$AlbumCollectionModelImpl;
+      required final List<int> ownedCommonStickers,
+      required final List<int> ownedFrameStickers,
+      required final List<int> ownedLegendStickers,
+      required final List<int> ownedA4Stickers}) = _$AlbumCollectionModelImpl;
 
   factory _AlbumCollectionModel.fromJson(Map<String, dynamic> json) =
       _$AlbumCollectionModelImpl.fromJson;
@@ -384,7 +475,13 @@ abstract class _AlbumCollectionModel implements AlbumCollectionModel {
   @override
   String get albumId;
   @override
-  List<int> get ownedStickers;
+  List<int> get ownedCommonStickers;
+  @override
+  List<int> get ownedFrameStickers;
+  @override
+  List<int> get ownedLegendStickers;
+  @override
+  List<int> get ownedA4Stickers;
 
   /// Create a copy of AlbumCollectionModel
   /// with the given fields replaced by the non-null parameter values.

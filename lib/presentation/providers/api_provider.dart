@@ -11,8 +11,3 @@ final userProfileProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final apiService = ref.watch(apiServiceProvider);
   return apiService.getUserProfile();
 });
-
-final authMethodsProvider = FutureProvider<List<String>>((ref) async {
-  final apiService = ref.watch(apiServiceProvider);
-  return apiService.getAuthMethods();
-});

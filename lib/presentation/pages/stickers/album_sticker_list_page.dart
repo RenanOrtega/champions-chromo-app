@@ -1,8 +1,12 @@
-import 'package:champions_chromo_app/domain/entities/cart/cart_item_entity.dart';
+import 'package:champions_chromo_app/domain/entities/album_entity.dart' as album;
 import 'package:champions_chromo_app/domain/entities/sticker_collection_entity.dart';
 import 'package:champions_chromo_app/domain/entities/sticker_entity.dart';
+import 'package:champions_chromo_app/domain/entities/cart/cart_item_entity.dart';
+import 'package:champions_chromo_app/domain/enums/operation_type.dart';
 import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
+import 'package:champions_chromo_app/presentation/providers/album/album_repository_provider.dart';
 import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
+import 'package:champions_chromo_app/presentation/providers/sticker_collection/sticker_collection_repository_provider.dart';
 import 'package:champions_chromo_app/presentation/providers/sticker_collection/sticker_collection_state_provider.dart';
 import 'package:champions_chromo_app/router/routes.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +29,10 @@ class AlbumStickerListPage extends ConsumerStatefulWidget {
 }
 
 class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
-  late List<Sticker> stickers;
+  late List<Sticker> stickers = [];
   bool isLoading = true;
+  album.Album? albumData;
+  AlbumCollection? userAlbumData;
 
   @override
   void initState() {
@@ -35,72 +41,162 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
   }
 
   Future<void> _loadStickers() async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      await ref
-          .read(stickerCollectionProvider.notifier)
-          .getStickerCollectionByUserIdAndAlbumId('user123', widget.albumId);
-
-      final stickerCollectionState = ref.read(stickerCollectionProvider);
-
-      stickerCollectionState.whenData((collections) {
-        if (collections.isNotEmpty) {
-          final collection = collections.first;
-          final albumCollection = collection.albums.firstWhere(
-            (album) => album.albumId == widget.albumId,
-            orElse: () =>
-                AlbumCollection(albumId: widget.albumId, ownedStickers: []),
-          );
-
-          const totalStickers = 100;
-          const stickersPerType = totalStickers ~/ 4;
-
-          stickers = List.generate(totalStickers, (index) {
-            final stickerNumber = index + 1;
-            final isCollected =
-                albumCollection.ownedStickers.contains(stickerNumber);
-
-            StickerType type;
-            if (index < stickersPerType) {
-              type = StickerType.comum;
-            } else if (index < stickersPerType * 2) {
-              type = StickerType.quadro;
-            } else if (index < stickersPerType * 3) {
-              type = StickerType.legends;
-            } else {
-              type = StickerType.a4;
-            }
-
-            double price;
-            switch (type) {
-              case StickerType.comum:
-                price = 2.0;
-              case StickerType.quadro:
-                price = 4.0;
-              case StickerType.legends:
-                price = 5.0;
-              case StickerType.a4:
-                price = 6.0;
-            }
-
-            return Sticker(
-              id: stickerNumber.toString(),
-              number: stickerNumber,
-              type: type,
-              isCollected: isCollected,
-              price: price,
-            );
-          });
-
-          setState(() {
-            isLoading = false;
-          });
-        }
+      final albumRepository = ref.read(albumRepositoryProvider);
+      final stickerCollectionRepository = ref.read(stickerCollectionRepositoryProvider);
+      
+      // Carrega dados do álbum
+      final schoolId = await _getSchoolIdFromAlbumId(widget.albumId);
+      final albumsResult = await albumRepository.getAlbumsBySchoolId(schoolId);
+      
+      // Encontra o álbum específico pelo ID
+      albumData = albumsResult.firstWhere(
+        (album) => album.id == widget.albumId,
+        orElse: () => throw Exception('Álbum não encontrado'),
+      );
+      
+      // Carrega figurinhas que o usuário possui
+      final userId = '67e4673a0e3e3ccb456476e3'; // TODO: Obter ID do usuário atual do provedor de autenticação
+      final userAlbumsResult = await stickerCollectionRepository.getByUserId(userId);
+      
+      final userAlbum = userAlbumsResult.albums;
+      userAlbumData = userAlbum.firstWhere(
+        (album) => album.albumId == widget.albumId,
+        orElse: () => AlbumCollection(
+          albumId: widget.albumId,
+          ownedCommonStickers: [],
+          ownedFrameStickers: [],
+          ownedLegendStickers: [],
+          ownedA4Stickers: [],
+        ),
+      );
+          
+      // Combina os dados para criar a lista de figurinhas
+      _buildStickersList();
+      
+      setState(() {
+        isLoading = false;
       });
     } catch (error) {
+      print('Erro ao carregar figurinhas: $error');
       setState(() {
         isLoading = false;
         stickers = [];
       });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao carregar figurinhas: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<String> _getSchoolIdFromAlbumId(String albumId) async {
+    // TODO: Implementar a lógica para obter o schoolId do albumId
+    // Esta é uma simplificação - você pode precisar fazer uma chamada adicional à API
+    // ou armazenar esta informação quando o usuário navega para esta página
+    return '67e46b4d335556bea30379bf';
+  }
+  
+  void _buildStickersList() {
+    if (albumData == null) return;
+    
+    final List<Sticker> allStickers = [];
+    
+    // Adiciona figurinhas comuns
+    for (var commonSticker in albumData!.commonStickers) {
+      final isCollected = userAlbumData?.ownedCommonStickers.contains(commonSticker.number) ?? false;
+      allStickers.add(Sticker(
+        id: '${widget.albumId}_${commonSticker.number}',
+        number: commonSticker.number,
+        type: StickerType.comum,
+        isCollected: isCollected,
+        price: 1.0, // TODO: Get price from album data
+      ));
+    }
+    
+    // Adiciona figurinhas quadro
+    for (var frameSticker in albumData!.frameStickers) {
+      final isCollected = userAlbumData?.ownedFrameStickers.contains(frameSticker.number) ?? false;
+      allStickers.add(Sticker(
+        id: '${widget.albumId}_${frameSticker.number}',
+        number: frameSticker.number,
+        type: StickerType.quadro,
+        isCollected: isCollected,
+        price: 1.0, // TODO: Get price from album data
+      ));
+    }
+    
+    // Adiciona figurinhas legends
+    for (var legendSticker in albumData!.legendStickers) {
+      final isCollected = userAlbumData?.ownedLegendStickers.contains(legendSticker.number) ?? false;
+      allStickers.add(Sticker(
+        id: '${widget.albumId}_${legendSticker.number}',
+        number: legendSticker.number,
+        type: StickerType.legends,
+        isCollected: isCollected,
+        price: 1.0, // TODO: Get price from album data
+      ));
+    }
+    
+    // Adiciona figurinhas A4
+    for (var a4Sticker in albumData!.a4Stickers) {
+      final isCollected = userAlbumData?.ownedA4Stickers.contains(a4Sticker.number) ?? false;
+      allStickers.add(Sticker(
+        id: '${widget.albumId}_${a4Sticker.number}',
+        number: a4Sticker.number,
+        type: StickerType.a4,
+        isCollected: isCollected,
+        price: 1.0, // TODO: Get price from album data
+      ));
+    }
+    
+    setState(() {
+      stickers = allStickers;
+    });
+  }
+
+  void _updateStickerCollection(Sticker sticker, OperationType operation) async {
+    try {
+      final stickerCollectionRepository = ref.read(stickerCollectionRepositoryProvider);
+      final userId = '67e4673a0e3e3ccb456476e3'; // TODO: Obter ID do usuário atual do provedor de autenticação
+      
+      // Atualiza a coleção no backend
+      await stickerCollectionRepository.updateStickerCollection(
+        userId, 
+        widget.albumId, 
+        sticker.number.toString(), 
+        sticker.type, 
+        operation
+      ); 
+      
+      // Atualiza a UI
+      setState(() {
+        final index = stickers.indexWhere((s) => s.id == sticker.id);
+        if (index != -1) {
+          stickers[index].isCollected = operation == OperationType.add;
+        }
+      });
+      
+      // Recarrega os dados da coleção para manter a consistência
+      await ref
+          .read(stickerCollectionProvider.notifier)
+          .getByUserId(userId);
+          
+    } catch (error) {
+      print('Erro ao atualizar coleção: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao atualizar coleção: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -134,11 +230,11 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: _getStickerTypeColor(sticker.type),
+                        color: Colors.blue,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withOpacity(0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -149,8 +245,8 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                           sticker.number.toString(),
                           style: const TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
                             fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -163,7 +259,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                           Text(
                             'Figurinha #${sticker.number}',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -171,16 +267,8 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                           Text(
                             'Tipo: ${_getStickerTypeName(sticker.type)}',
                             style: TextStyle(
+                              color: Colors.grey[600],
                               fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Preço: R\$ ${sticker.price.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
                             ),
                           ),
                         ],
@@ -189,18 +277,15 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                   ],
                 ),
               ),
-              const Divider(),
               ListTile(
                 leading: Icon(
-                  Icons.check_circle_outline,
+                  Icons.add_circle_outline,
                   color: sticker.isCollected ? Colors.grey : Colors.green,
                 ),
                 title: const Text('Marcar como obtida'),
                 enabled: !sticker.isCollected,
                 onTap: () {
-                  setState(() {
-                    sticker.isCollected = true;
-                  });
+                  _updateStickerCollection(sticker, OperationType.add);
                   Navigator.pop(context);
                 },
               ),
@@ -212,9 +297,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                 title: const Text('Desmarcar como obtida'),
                 enabled: sticker.isCollected,
                 onTap: () {
-                  setState(() {
-                    sticker.isCollected = false;
-                  });
+                  _updateStickerCollection(sticker, OperationType.remove);
                   Navigator.pop(context);
                 },
               ),
@@ -312,12 +395,12 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
               ],
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(15),
                 bottomRight: Radius.circular(15),
               ),
@@ -344,7 +427,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                         children: [
                           Text(
                             widget.albumName,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
@@ -388,6 +471,8 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
 
   Widget _buildStickerSection(String title, StickerType type) {
     final sectionStickers = stickers.where((s) => s.type == type).toList();
+    if (sectionStickers.isEmpty) return Container(); // Não exibe seções vazias
+    
     final collectedCount = sectionStickers.where((s) => s.isCollected).length;
     final totalCount = sectionStickers.length;
 
@@ -397,7 +482,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -490,7 +575,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
           Container(
             decoration: BoxDecoration(
               color: sticker.isCollected
-                  ? _getStickerTypeColor(sticker.type).withValues(alpha: 0.8)
+                  ? _getStickerTypeColor(sticker.type).withOpacity(0.8)
                   : Colors.grey[300],
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
@@ -501,7 +586,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withOpacity(0.05),
                   blurRadius: 2,
                   offset: const Offset(0, 1),
                 ),
@@ -543,7 +628,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
   Widget _buildSummary() {
     final collectedCount = stickers.where((s) => s.isCollected).length;
     final totalCount = stickers.length;
-    final percentage = (collectedCount / totalCount * 100).toInt();
+    final percentage = totalCount > 0 ? (collectedCount / totalCount * 100).toInt() : 0;
 
     return Container(
       color: Colors.white,
@@ -557,7 +642,7 @@ class _AlbumStickerListPageState extends ConsumerState<AlbumStickerListPage> {
                 width: 60,
                 height: 60,
                 child: CircularProgressIndicator(
-                  value: collectedCount / totalCount,
+                  value: totalCount > 0 ? collectedCount / totalCount : 0,
                   backgroundColor: Colors.grey[200],
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
                   strokeWidth: 8,

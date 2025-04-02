@@ -9,7 +9,7 @@ class ApiService {
     required AuthService authService,
   })  : _authService = authService,
         _dio = Dio(BaseOptions(
-          baseUrl: 'http://10.0.2.2:3000/api',
+          baseUrl: 'http://10.0.2.2:7133/api',
           validateStatus: (status) => status! < 500,
         ));
 
@@ -50,7 +50,7 @@ class ApiService {
   Future<Map<String, dynamic>> updateUserProfile() async {
     await _setupInterceptors();
     try {
-      final response = await _dio.post('/users/profile');
+      final response = await _dio.post('/user');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data;
@@ -59,24 +59,6 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Erro ao atualizar perfil: ${e.toString()}');
-    }
-  }
-
-  Future<List<String>> getAuthMethods() async {
-    await _setupInterceptors();
-    try {
-      final response = await _dio.get('/users/auth-methods');
-
-      if (response.statusCode == 200) {
-        return List<String>.from(
-            response.data.map((m) => m['providerId'] as String));
-      } else {
-        throw Exception(
-            response.data['error'] ?? 'Erro ao buscar métodos de autenticação');
-      }
-    } catch (e) {
-      throw Exception(
-          'Erro ao buscar métodos de autenticação: ${e.toString()}');
     }
   }
 }

@@ -26,7 +26,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
   void initState() {
     super.initState();
     Future.microtask(() =>
-        ref.read(albumsProvider.notifier).getAlbumsBySchoolId(widget.schoolId));
+        ref.read(albumsProvider.notifier).getAlbumsBySchoolIdId(widget.schoolId));
   }
 
   @override

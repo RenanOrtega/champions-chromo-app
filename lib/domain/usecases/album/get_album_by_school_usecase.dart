@@ -7,6 +7,6 @@ class GetAlbumsBySchoolUseCase {
   GetAlbumsBySchoolUseCase(this._repository);
 
   Future<List<Album>> execute(String schoolId) async {
-    return await _repository.getAlbumsBySchool(schoolId);
+    return await _repository.getAlbumsBySchoolId(schoolId);
   }
 }

@@ -10,7 +10,7 @@ class AlbumRepositoryImpl implements AlbumRepository {
   AlbumRepositoryImpl(this._dio);
 
   @override
-  Future<List<Album>> getAlbumsBySchool(String schoolId) async {
+  Future<List<Album>> getAlbumsBySchoolId(String schoolId) async {
     try {
       final response = await _dio.get('/album/schoolId/$schoolId');
       final List<dynamic> data = response.data;
