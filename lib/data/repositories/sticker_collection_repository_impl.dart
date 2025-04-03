@@ -12,21 +12,18 @@ class StickerCollectionRepositoryImpl implements StickerCollectionRepository {
   StickerCollectionRepositoryImpl(this._dio);
 
   @override
-  Future<StickerCollection> getByUserId(
-      String userId) async {
+  Future<StickerCollection> getByUserId(String userId) async {
     try {
-      final response =
-          await _dio.get('/stickercollection/userId/$userId');
+      final response = await _dio.get('/stickercollection/userId/$userId');
       final dynamic data = response.data;
       return StickerCollectionModel.fromJson(data).toDomain();
     } on DioException catch (e) {
       throw Exception('Failed to fetch sticker collection: ${e.message}');
     }
   }
-  
+
   @override
   Future<void> updateStickerCollection(
-    String userId,
     String albumId,
     String stickerNumber,
     StickerType stickerType,
@@ -34,8 +31,8 @@ class StickerCollectionRepositoryImpl implements StickerCollectionRepository {
   ) async {
     try {
       final String endpoint = operation.name.toLowerCase() == 'add'
-          ? '/stickercollection/userId/$userId/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/${stickerType.name}/add'
-          : '/stickercollection/userId/$userId/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/${stickerType.name}/remove';
+          ? '/stickercollection/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/${stickerType.name}/add'
+          : '/stickercollection/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/${stickerType.name}/remove';
 
       await _dio.patch(
         endpoint,

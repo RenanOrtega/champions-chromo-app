@@ -1,11 +1,8 @@
-import 'package:champions_chromo_app/presentation/pages/login/components/square_tile.dart';
-import 'package:champions_chromo_app/presentation/providers/api_provider.dart';
-import 'package:champions_chromo_app/presentation/providers/auth_provider.dart';
-import 'package:champions_chromo_app/router/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:champions_chromo_app/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'components/square_tile.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -17,7 +14,6 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage>
     with SingleTickerProviderStateMixin {
   final TextEditingController phoneController = TextEditingController();
-  bool _isLoading = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -53,16 +49,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
     super.dispose();
   }
 
-  Future<void> _updateUserProfile() async {
-    try {
-      final apiService = ref.read(apiServiceProvider);
-      await apiService.updateUserProfile();
-    } catch (e) {
-      if (!context.mounted) return;
-      _showErrorSnackBar('Erro ao atualizar perfil: ${e.toString()}');
-    }
-  }
-
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -77,33 +63,19 @@ class _LoginPageState extends ConsumerState<LoginPage>
     );
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    if (_isLoading) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final authService = ref.read(authServiceProvider);
-      final UserCredential? userCredential =
-          await authService.signInWithGoogle();
-
-      if (!context.mounted) return;
-
-      if (userCredential != null) {
-        await _updateUserProfile();
-        context.go(AppRoutes.schools);
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      _showErrorSnackBar('Erro ao fazer login: ${e.toString()}');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    final authController = ref.watch(authControllerProvider);
+
+    // Escutar mudanças no estado de autenticação
+    ref.listen(authControllerProvider, (previous, next) {
+      if (next.isSuccess && next.value == true) {
+        context.go('/');
+      } else if (next.isError) {
+        _showErrorSnackBar('Erro ao fazer login: ${next.error}');
+      }
+    });
 
     return Scaffold(
       body: Container(
@@ -139,10 +111,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: Colors.white.withOpacity(0.9),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
+                                color: Colors.black.withOpacity(0.2),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               )
@@ -163,7 +135,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                             color: Colors.white,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withValues(alpha: 0.3),
+                                color: Colors.black.withOpacity(0.3),
                                 offset: const Offset(0, 2),
                                 blurRadius: 4,
                               ),
@@ -175,7 +147,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           'Faça login para continuar',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white.withValues(alpha: 0.85),
+                            color: Colors.white.withOpacity(0.85),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -187,7 +159,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
+                                color: Colors.black.withOpacity(0.1),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               )
@@ -242,7 +214,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                 width: double.infinity,
                                 height: 55,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    // Implementar login com telefone quando necessário
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     elevation: 3,
                                     shape: RoundedRectangleBorder(
@@ -251,8 +225,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                     foregroundColor: Colors.white,
                                     backgroundColor: Colors.blue.shade400,
                                   ),
-                                  child: _isLoading
-                                      ? SizedBox(
+                                  child: authController.isLoading
+                                      ? const SizedBox(
                                           height: 24,
                                           width: 24,
                                           child: CircularProgressIndicator(
@@ -278,7 +252,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                             Expanded(
                               child: Divider(
                                 thickness: 0.5,
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: Colors.white.withOpacity(0.5),
                               ),
                             ),
                             Padding(
@@ -287,7 +261,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                               child: Text(
                                 'Ou continue com',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.9),
+                                  color: Colors.white.withOpacity(0.9),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -296,7 +270,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                             Expanded(
                               child: Divider(
                                 thickness: 0.5,
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: Colors.white.withOpacity(0.5),
                               ),
                             ),
                           ],
@@ -307,13 +281,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           children: [
                             SquareTile(
                               svgPath: 'assets/svg/google.svg',
-                              onTap: _isLoading ? null : _handleGoogleSignIn,
+                              onTap: authController.isLoading
+                                  ? null
+                                  : () => ref
+                                      .read(authControllerProvider.notifier)
+                                      .signInWithGoogle(),
                             ),
-                            SizedBox(width: 25),
-                            SquareTile(
-                              svgPath: 'assets/svg/apple.svg',
-                              onTap: _isLoading ? null : () {},
-                            )
                           ],
                         ),
                         const SizedBox(height: 32),
@@ -322,7 +295,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withValues(alpha: 0.7),
+                            color: Colors.white.withOpacity(0.7),
                           ),
                         )
                       ],

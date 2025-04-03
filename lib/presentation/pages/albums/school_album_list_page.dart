@@ -1,7 +1,7 @@
 import 'package:champions_chromo_app/domain/entities/album_entity.dart';
 import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
 import 'package:champions_chromo_app/presentation/providers/album/album_state_provider.dart';
-import 'package:champions_chromo_app/router/routes.dart';
+import 'package:champions_chromo_app/presentation/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,8 +25,9 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        ref.read(albumsProvider.notifier).getAlbumsBySchoolIdId(widget.schoolId));
+    Future.microtask(() => ref
+        .read(albumsProvider.notifier)
+        .getAlbumsBySchoolIdId(widget.schoolId));
   }
 
   @override

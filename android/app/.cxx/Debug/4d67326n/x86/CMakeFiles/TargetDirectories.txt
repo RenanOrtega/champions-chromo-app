@@ -1,0 +1,2 @@
+C:/developer/personal/champions-chromo-app/android/app/.cxx/Debug/4d67326n/x86/CMakeFiles/edit_cache.dir
+C:/developer/personal/champions-chromo-app/android/app/.cxx/Debug/4d67326n/x86/CMakeFiles/rebuild_cache.dir

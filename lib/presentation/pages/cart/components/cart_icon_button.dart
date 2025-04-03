@@ -1,5 +1,5 @@
 import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
-import 'package:champions_chromo_app/router/routes.dart';
+import 'package:champions_chromo_app/presentation/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

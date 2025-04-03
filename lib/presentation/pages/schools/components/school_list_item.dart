@@ -1,6 +1,6 @@
 import 'package:champions_chromo_app/domain/entities/school_entity.dart';
 import 'package:champions_chromo_app/presentation/providers/school/favorites/favorites_schools_state_provider.dart';
-import 'package:champions_chromo_app/router/routes.dart';
+import 'package:champions_chromo_app/presentation/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
