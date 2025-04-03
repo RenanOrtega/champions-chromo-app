@@ -25,6 +25,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isLogin) return AppRoutes.login;
 
       if (isLoggedIn && isLogin) return AppRoutes.schools;
+      
+      return null;
     },
     routes: [
       GoRoute(
@@ -36,7 +38,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => LoginPage(),
       ),
       GoRoute(
-        path: '/schools',
+        path: '/',
         builder: (context, state) => SchoolListPage(),
       ),
       GoRoute(

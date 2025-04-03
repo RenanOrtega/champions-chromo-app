@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:champions_chromo_app/core/constants.dart';
 import 'package:champions_chromo_app/data/datasources/auth_local_datasource.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final apiServiceProvider = Provider<ApiService>((ref) {
@@ -17,8 +20,14 @@ class ApiService {
       baseUrl: AppConstants.apiBaseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
+      validateStatus: (status) {
+        return status != null && status < 500;
+      },
+      followRedirects: true,
+      maxRedirects: 5,
     ));
     _setupInterceptors();
+    _configureHttps();
   }
 
   void _setupInterceptors() {
@@ -39,6 +48,20 @@ class ApiService {
         },
       ),
     );
+  }
+
+  void _configureHttps() {
+    // Configuração para aceitar certificados auto-assinados
+    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient();
+      
+      // Para ambiente de desenvolvimento - aceita todos os certificados
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) {
+        return true; // ⚠️ Use apenas em desenvolvimento!
+      };
+      
+      return client;
+    };
   }
 
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) {

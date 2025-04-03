@@ -1,4 +1,5 @@
 import 'package:champions_chromo_app/data/services/api_service.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -50,12 +51,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> loginToBackend(String firebaseToken) async {
     try {
       final response = await _apiService.post(
-        '/auth/login',
+        '/user/login',
         data: {'firebaseId': firebaseToken},
       );
       return response.data['token'];
+    } on DioException catch (e) {
+      print(e.message);
+      throw Exception('Error in backend request: ${e.message}');
     } catch (e) {
-      throw Exception('Falha ao fazer login no backend: ${e.toString()}');
+      throw Exception('Failed to log in to backend: ${e.toString()}');
     }
   }
 
