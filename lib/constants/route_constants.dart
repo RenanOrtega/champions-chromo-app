@@ -5,4 +5,5 @@ class RouteConstants {
   static const albums = '/albums';
   static const stickers = '/stickers';
   static const cart = '/cart';
+  static const checkout = '/checkout';
 }

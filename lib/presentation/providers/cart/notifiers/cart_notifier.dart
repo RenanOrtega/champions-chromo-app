@@ -35,4 +35,8 @@ class CartNotifier extends StateNotifier<CartState> {
     final newItems = updateQuantityUseCase.execute(id, increase: false);
     state = state.copyWith(items: newItems);
   }
+
+  void clearCart() {
+    state = state.copyWith(items: []);
+  }
 }

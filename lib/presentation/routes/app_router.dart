@@ -1,6 +1,7 @@
 import 'package:champions_chromo_app/domain/repositories/auth_repository.dart';
 import 'package:champions_chromo_app/presentation/pages/albums/album_list_page.dart';
 import 'package:champions_chromo_app/presentation/pages/cart/cart_page.dart';
+import 'package:champions_chromo_app/presentation/pages/checkout/checkout_page.dart';
 import 'package:champions_chromo_app/presentation/pages/login/login_page.dart';
 import 'package:champions_chromo_app/presentation/pages/schools/school_list_page.dart';
 import 'package:champions_chromo_app/presentation/pages/splash/splash_page.dart';
@@ -43,20 +44,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/albums',
-        builder: (context, state) => AlbumListPage(schoolId: state.uri.queryParameters['schoolId']!),
+        builder: (context, state) =>
+            AlbumListPage(schoolId: state.uri.queryParameters['schoolId']!),
       ),
       GoRoute(
         path: '/stickers',
         builder: (context, state) => StickerCollectionPage(
-            albumId: state.uri.queryParameters['albumId']!,
-            schoolId: state.uri.queryParameters['schoolId']!,
-            // schoolName: state.uri.queryParameters['schoolName']!,
-            ),
+          albumId: state.uri.queryParameters['albumId']!,
+          schoolId: state.uri.queryParameters['schoolId']!,
+        ),
       ),
       GoRoute(
         path: '/cart',
         builder: (context, state) => CartPage(),
-      )
+      ),
+      GoRoute(path: '/checkout', builder: (context, state) => CheckoutPage())
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
