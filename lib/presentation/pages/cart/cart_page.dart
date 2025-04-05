@@ -1,7 +1,7 @@
 import 'package:champions_chromo_app/presentation/pages/cart/components/cart_footer.dart';
 import 'package:champions_chromo_app/presentation/pages/cart/components/cart_item_card.dart';
 import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
-import 'package:champions_chromo_app/router/routes.dart';
+import 'package:champions_chromo_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,13 +45,13 @@ class CartPage extends ConsumerWidget {
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
                     onPressed: () {
-                      context.go(AppRoutes.schools);
+                      context.go(RouteConstants.schools);
                     },
                     icon: const Icon(
                       Icons.add_shopping_cart,
                       color: Colors.black,
                     ),
-                    label: const Text('Continuar comprando'),
+                    label: const Text('Começar compra'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),
@@ -100,7 +100,7 @@ class CartPage extends ConsumerWidget {
                                   icon: const Icon(Icons.arrow_back,
                                       color: Colors.white),
                                   onPressed: () {
-                                    context.go(AppRoutes.schools);
+                                    context.go(RouteConstants.schools);
                                   },
                                 ),
                               ],

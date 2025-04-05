@@ -1,11 +1,8 @@
-import 'package:champions_chromo_app/presentation/pages/login/components/square_tile.dart';
-import 'package:champions_chromo_app/presentation/providers/api_provider.dart';
-import 'package:champions_chromo_app/presentation/providers/auth_provider.dart';
-import 'package:champions_chromo_app/router/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:champions_chromo_app/presentation/providers/auth/auth_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'components/square_tile.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -53,16 +50,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
     super.dispose();
   }
 
-  Future<void> _updateUserProfile() async {
-    try {
-      final apiService = ref.read(apiServiceProvider);
-      await apiService.updateUserProfile();
-    } catch (e) {
-      if (!context.mounted) return;
-      _showErrorSnackBar('Erro ao atualizar perfil: ${e.toString()}');
-    }
-  }
-
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -77,33 +64,24 @@ class _LoginPageState extends ConsumerState<LoginPage>
     );
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    if (_isLoading) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final authService = ref.read(authServiceProvider);
-      final UserCredential? userCredential =
-          await authService.signInWithGoogle();
-
-      if (!context.mounted) return;
-
-      if (userCredential != null) {
-        await _updateUserProfile();
-        context.go(AppRoutes.schools);
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      _showErrorSnackBar('Erro ao fazer login: ${e.toString()}');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+
+    // Escutar mudanças no estado de autenticação
+    ref.listen(authStateProvider, (previous, next) {
+      next.when(
+        data: (isLoggedIn) {
+          if (isLoggedIn) {
+            context.go('/');
+          }
+        },
+        error: (error, stackTrace) {
+          _showErrorSnackBar('Erro ao fazer login: $error');
+        },
+        loading: () {},
+      );
+    });
 
     return Scaffold(
       body: Container(
@@ -307,13 +285,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           children: [
                             SquareTile(
                               svgPath: 'assets/svg/google.svg',
-                              onTap: _isLoading ? null : _handleGoogleSignIn,
+                              onTap: _isLoading
+                                  ? null
+                                  : () => ref
+                                      .read(authStateProvider.notifier)
+                                      .signInWithGoogle(),
                             ),
-                            SizedBox(width: 25),
-                            SquareTile(
-                              svgPath: 'assets/svg/apple.svg',
-                              onTap: _isLoading ? null : () {},
-                            )
                           ],
                         ),
                         const SizedBox(height: 32),

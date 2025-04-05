@@ -13,10 +13,10 @@ class SchoolListPage extends ConsumerStatefulWidget {
   const SchoolListPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SchoolListPage();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SchoolListPageState();
 }
 
-class _SchoolListPage extends ConsumerState<SchoolListPage> {
+class _SchoolListPageState extends ConsumerState<SchoolListPage> {
   Timer? _debounce;
   final _searchController = TextEditingController();
 

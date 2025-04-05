@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "963712589779-ej9dpj88913n3iihh1io0rne20umfe4a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.champions_chromo_app",
+            "certificate_hash": "d5cf73f4af518f6b848cfab62536f2867d95ada7"
+          }
+        },
+        {
           "client_id": "963712589779-1hse34dtk6ovob8qsnqf731a3fhp7941.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "963712589779-1hse34dtk6ovob8qsnqf731a3fhp7941.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "963712589779-1tmajpa7dhmesehen7us37q3pvhrceo8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.championsChromoApp"
+              }
             }
           ]
         }

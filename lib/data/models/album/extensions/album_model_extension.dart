@@ -26,7 +26,6 @@ extension StickerModelExtension on StickerModel {
   Sticker toDomain() {
     return Sticker(
       number: number,
-      name: name,
     );
   }
 }

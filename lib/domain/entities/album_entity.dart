@@ -28,10 +28,8 @@ class Album {
 
 class Sticker {
   final int number;
-  final String name;
 
   Sticker({
     required this.number,
-    required this.name,
   });
 }

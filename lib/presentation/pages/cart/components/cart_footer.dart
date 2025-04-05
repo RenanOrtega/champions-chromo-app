@@ -1,6 +1,8 @@
+import 'package:champions_chromo_app/constants/route_constants.dart';
 import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class CartFooter extends ConsumerWidget {
   const CartFooter({super.key});
@@ -89,7 +91,7 @@ class CartFooter extends ConsumerWidget {
                 onPressed: cart.items.isEmpty
                     ? null
                     : () {
-                        // Implement checkout functionality
+                        context.go(RouteConstants.checkout);
                       },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -105,7 +107,7 @@ class CartFooter extends ConsumerWidget {
                     Icon(Icons.shopping_cart_checkout),
                     SizedBox(width: 12),
                     Text(
-                      'Finalizar Compra',
+                      'Ir para o checkout',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
