@@ -1,55 +1,60 @@
 import 'package:champions_chromo_app/domain/entities/album_entity.dart';
 import 'package:champions_chromo_app/presentation/pages/cart/components/cart_icon_button.dart';
+import 'package:champions_chromo_app/constants/route_constants.dart';
 import 'package:champions_chromo_app/presentation/providers/album/album_state_provider.dart';
-import 'package:champions_chromo_app/presentation/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SchoolAlbumListPage extends ConsumerStatefulWidget {
+class AlbumListPage extends ConsumerStatefulWidget {
   final String schoolId;
-  final String schoolName;
 
-  const SchoolAlbumListPage({
+  const AlbumListPage({
     super.key,
-    required this.schoolName,
     required this.schoolId,
   });
 
   @override
-  ConsumerState<SchoolAlbumListPage> createState() =>
-      _SchoolAlbumListPageState();
+  ConsumerState<AlbumListPage> createState() => _AlbumListPageState();
 }
 
-class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
+class _AlbumListPageState extends ConsumerState<AlbumListPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref
+    // Use addPostFrameCallback para carregar os álbuns após a renderização inicial
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadAlbums();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _loadAlbums() async {
+    await ref
         .read(albumsProvider.notifier)
-        .getBySchoolId(widget.schoolId));
+        .getAlbumsBySchoolId(widget.schoolId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final albumsState = ref.watch(albumsProvider);
+    final albumsAsync = ref.watch(albumsProvider);
+    int albumCount =
+        albumsAsync.value?.isNotEmpty ?? false ? albumsAsync.value!.length : 0;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: Column(
         children: [
-          _buildHeader(context, albumsState),
+          _buildHeader(context, albumCount),
           Expanded(
-            child: albumsState.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => Center(
-                child: Text(
-                  'Erro ao carregar álbuns: ${error.toString()}',
-                  style: const TextStyle(color: Colors.red),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+            child: albumsAsync.when(
               data: (albums) => _buildAlbumGrid(context, albums),
+              error: (error, stackTrace) => _buildError(context, error),
+              loading: () => _buildLoading(context),
             ),
           )
         ],
@@ -57,13 +62,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
     );
   }
 
-  Widget _buildHeader(
-      BuildContext context, AsyncValue<List<Album>> albumsState) {
-    int albumCount = 0;
-    if (albumsState is AsyncData<List<Album>>) {
-      albumCount = albumsState.value.length;
-    }
-
+  Widget _buildHeader(BuildContext context, int albumCount) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -73,7 +72,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -97,7 +96,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
                 IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    context.go(AppRoutes.schools);
+                    context.go(RouteConstants.schools);
                   },
                 ),
                 Text(
@@ -160,10 +159,8 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
           borderRadius: BorderRadius.circular(12),
           child: InkWell(
             onTap: () {
-              // Seleciona o álbum antes de navegar
-              ref.read(selectedAlbumProvider.notifier).state = album;
               context.go(
-                  '${AppRoutes.stickers}?albumName=${album.name}&albumId=${album.id}&schoolId=${widget.schoolId}&schoolName=${widget.schoolName}');
+                  '${RouteConstants.stickers}?albumName=${album.name}&albumId=${album.id}&schoolId=${widget.schoolId}');
             },
             borderRadius: BorderRadius.circular(12),
             child: Container(
@@ -179,7 +176,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
                     width: 70,
                     height: 70,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.3),
+                      color: Colors.grey.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(35),
                     ),
                     child: const Icon(
@@ -222,6 +219,33 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLoading(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  Widget _buildError(BuildContext context, Object error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          const SizedBox(height: 16),
+          const Text(
+            'Erro ao carregar álbuns',
+            style: TextStyle(fontSize: 16, color: Colors.black54),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: _loadAlbums,
+            child: const Text('Tentar novamente'),
+          ),
+        ],
+      ),
     );
   }
 }

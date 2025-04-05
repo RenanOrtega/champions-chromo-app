@@ -1,4 +1,4 @@
-import 'package:champions_chromo_app/data/services/api_service.dart';
+import 'package:champions_chromo_app/infrastructure/clients/dio_http_client_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,21 +11,21 @@ abstract class AuthRemoteDataSource {
 }
 
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
-  final apiService = ref.watch(apiServiceProvider);
+  final dioHttpClient = ref.watch(dioHttpClientProvider);
   return AuthRemoteDataSourceImpl(
     FirebaseAuth.instance,
     GoogleSignIn(),
-    apiService,
+    dioHttpClient,
   );
 });
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
-  final ApiService _apiService;
+  final Dio _dioHttpClient;
 
   AuthRemoteDataSourceImpl(
-      this._firebaseAuth, this._googleSignIn, this._apiService);
+      this._firebaseAuth, this._googleSignIn, this._dioHttpClient);
 
   @override
   Future<String?> signInWithGoogle() async {
@@ -50,13 +50,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> loginToBackend(String firebaseToken) async {
     try {
-      final response = await _apiService.post(
+      final response = await _dioHttpClient.post(
         '/user/login',
         data: {'firebaseId': firebaseToken},
       );
       return response.data['token'];
     } on DioException catch (e) {
-      print(e.message);
       throw Exception('Error in backend request: ${e.message}');
     } catch (e) {
       throw Exception('Failed to log in to backend: ${e.toString()}');

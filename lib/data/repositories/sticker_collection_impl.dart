@@ -6,37 +6,32 @@ import 'package:champions_chromo_app/domain/enums/operation_type.dart';
 import 'package:champions_chromo_app/domain/repositories/sticker_collection_repository.dart';
 import 'package:dio/dio.dart';
 
-class StickerCollectionRepositoryImpl implements StickerCollectionRepository {
+class StickerCollectionImpl extends StickerCollectionRepository {
   final Dio _dio;
 
-  StickerCollectionRepositoryImpl(this._dio);
+  StickerCollectionImpl({required Dio dio}) : _dio = dio;
 
   @override
   Future<StickerCollection> getByUserId() async {
     try {
       final response = await _dio.get('/stickercollection');
-      final dynamic data = response.data;
-      return StickerCollectionModel.fromJson(data).toDomain();
+      return StickerCollectionModel.fromJson(response.data).toDomain();
     } on DioException catch (e) {
       throw Exception('Failed to fetch sticker collection: ${e.message}');
     }
   }
 
   @override
-  Future<void> updateStickerCollection(
-    String albumId,
-    String stickerNumber,
-    StickerType stickerType,
-    OperationType operation,
-  ) async {
+  Future<void> updateStickerCollection(String albumId, String stickerNumber,
+      StickerType stickerType, OperationType operation) async {
     try {
-      final String endpoint = operation.name.toLowerCase() == 'add'
-          ? '/stickercollection/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/${stickerType.name}/add'
-          : '/stickercollection/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/${stickerType.name}/remove';
+      final stickerTypeString = stickerType.toString().split('.').last;
 
-      await _dio.patch(
-        endpoint,
-      );
+      final url = operation == OperationType.add
+          ? '/stickercollection/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/$stickerTypeString/add'
+          : '/stickercollection/albumId/$albumId/stickerNumber/$stickerNumber/stickerType/$stickerTypeString/remove';
+
+      await _dio.patch(url);
     } on DioException catch (e) {
       throw Exception('Failed to update sticker collection: ${e.message}');
     }

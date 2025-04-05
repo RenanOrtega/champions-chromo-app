@@ -1,6 +1,6 @@
 import 'package:champions_chromo_app/domain/entities/school_entity.dart';
 import 'package:champions_chromo_app/presentation/providers/school/favorites/favorites_schools_state_provider.dart';
-import 'package:champions_chromo_app/presentation/routes/routes.dart';
+import 'package:champions_chromo_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +23,7 @@ class SchoolListItem extends ConsumerWidget {
         child: InkWell(
           onTap: () {
             context.go(
-                '${AppRoutes.albums}?schoolName=${school.name}&schoolId=${school.id}');
+                '${RouteConstants.albums}?schoolName=${school.name}&schoolId=${school.id}');
           },
           borderRadius: BorderRadius.circular(12),
           child: Container(

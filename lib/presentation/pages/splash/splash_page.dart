@@ -1,5 +1,5 @@
 import 'package:champions_chromo_app/domain/repositories/auth_repository.dart';
-import 'package:champions_chromo_app/presentation/routes/routes.dart';
+import 'package:champions_chromo_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +26,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     if (!mounted) return;
 
     final isLoggedIn = authRepository.isLoggedIn;
-    context.go(isLoggedIn ? AppRoutes.schools : AppRoutes.login);
+    context.go(isLoggedIn ? RouteConstants.schools : RouteConstants.login);
   }
 
   @override

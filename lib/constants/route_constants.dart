@@ -1,4 +1,4 @@
-class AppRoutes {
+class RouteConstants {
   static const login = '/login';
   static const splash = '/splash';
   static const schools = '/';

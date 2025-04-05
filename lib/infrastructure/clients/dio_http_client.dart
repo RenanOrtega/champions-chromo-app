@@ -1,25 +1,19 @@
 import 'dart:io';
 
-import 'package:champions_chromo_app/core/constants.dart';
+import 'package:champions_chromo_app/constants/api_constants.dart';
 import 'package:champions_chromo_app/data/datasources/auth_local_datasource.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final apiServiceProvider = Provider<ApiService>((ref) {
-  final authLocalDataSource = ref.watch(authLocalDataSourceProvider);
-  return ApiService(authLocalDataSource);
-});
-
-class ApiService {
+class DioHttpClient {
   late final Dio _dio;
   final AuthLocalDataSource _authLocalDataSource;
 
   Dio get dio => _dio;
 
-  ApiService(this._authLocalDataSource) {
+  DioHttpClient(this._authLocalDataSource) {
     _dio = Dio(BaseOptions(
-      baseUrl: AppConstants.apiBaseUrl,
+      baseUrl: ApiConstants.apiBaseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       validateStatus: (status) {

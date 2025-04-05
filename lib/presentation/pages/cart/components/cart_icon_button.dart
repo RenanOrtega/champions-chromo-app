@@ -1,5 +1,5 @@
 import 'package:champions_chromo_app/presentation/providers/cart/notifiers/cart_notifier.dart';
-import 'package:champions_chromo_app/presentation/routes/routes.dart';
+import 'package:champions_chromo_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +19,7 @@ class CartIconButton extends ConsumerWidget {
             Icons.shopping_cart,
             color: color,
           ),
-          onPressed: () => context.go(AppRoutes.cart),
+          onPressed: () => context.go(RouteConstants.cart),
           padding: EdgeInsets.zero,
         ),
         if (cartItemCount > 0)
