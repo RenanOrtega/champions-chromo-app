@@ -15,6 +15,8 @@ class ApiService {
   late final Dio _dio;
   final AuthLocalDataSource _authLocalDataSource;
 
+  Dio get dio => _dio;
+
   ApiService(this._authLocalDataSource) {
     _dio = Dio(BaseOptions(
       baseUrl: AppConstants.apiBaseUrl,

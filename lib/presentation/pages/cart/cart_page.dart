@@ -51,7 +51,7 @@ class CartPage extends ConsumerWidget {
                       Icons.add_shopping_cart,
                       color: Colors.black,
                     ),
-                    label: const Text('Continuar comprando'),
+                    label: const Text('Começar compra'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),

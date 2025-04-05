@@ -12,9 +12,9 @@ class StickerCollectionRepositoryImpl implements StickerCollectionRepository {
   StickerCollectionRepositoryImpl(this._dio);
 
   @override
-  Future<StickerCollection> getByUserId(String userId) async {
+  Future<StickerCollection> getByUserId() async {
     try {
-      final response = await _dio.get('/stickercollection/userId/$userId');
+      final response = await _dio.get('/stickercollection');
       final dynamic data = response.data;
       return StickerCollectionModel.fromJson(data).toDomain();
     } on DioException catch (e) {

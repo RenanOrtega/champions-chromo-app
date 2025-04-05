@@ -27,7 +27,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
     super.initState();
     Future.microtask(() => ref
         .read(albumsProvider.notifier)
-        .getAlbumsBySchoolIdId(widget.schoolId));
+        .getBySchoolId(widget.schoolId));
   }
 
   @override
@@ -163,7 +163,7 @@ class _SchoolAlbumListPageState extends ConsumerState<SchoolAlbumListPage> {
               // Seleciona o álbum antes de navegar
               ref.read(selectedAlbumProvider.notifier).state = album;
               context.go(
-                  '${AppRoutes.stickers}?albumName=${album.name}&albumId=${album.id}');
+                  '${AppRoutes.stickers}?albumName=${album.name}&albumId=${album.id}&schoolId=${widget.schoolId}&schoolName=${widget.schoolName}');
             },
             borderRadius: BorderRadius.circular(12),
             child: Container(

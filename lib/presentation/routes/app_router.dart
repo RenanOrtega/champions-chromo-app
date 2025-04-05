@@ -4,7 +4,8 @@ import 'package:champions_chromo_app/presentation/pages/cart/cart_page.dart';
 import 'package:champions_chromo_app/presentation/pages/login/login_page.dart';
 import 'package:champions_chromo_app/presentation/pages/schools/school_list_page.dart';
 import 'package:champions_chromo_app/presentation/pages/splash/splash_page.dart';
-import 'package:champions_chromo_app/presentation/pages/stickers/album_sticker_list_page.dart';
+import 'package:champions_chromo_app/presentation/pages/stickers/components/sticker_grid.dart';
+import 'package:champions_chromo_app/presentation/pages/stickers/sticker_collection_page.dart';
 import 'package:champions_chromo_app/presentation/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +26,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isLogin) return AppRoutes.login;
 
       if (isLoggedIn && isLogin) return AppRoutes.schools;
-      
+
       return null;
     },
     routes: [
@@ -49,9 +50,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/stickers',
-        builder: (context, state) => AlbumStickerListPage(
-            albumName: state.uri.queryParameters['albumName']!,
-            albumId: state.uri.queryParameters['albumId']!),
+        builder: (context, state) => StickerCollectionPage(
+            // albumName: state.uri.queryParameters['albumName']!,
+            albumId: state.uri.queryParameters['albumId']!
+            // schoolId: state.uri.queryParameters['schoolId']!,
+            // schoolName: state.uri.queryParameters['schoolName']!,
+            ),
       ),
       GoRoute(
         path: '/cart',

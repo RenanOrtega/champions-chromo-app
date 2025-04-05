@@ -3,7 +3,7 @@ import 'package:champions_chromo_app/domain/entities/sticker_entity.dart';
 import 'package:champions_chromo_app/domain/enums/operation_type.dart';
 
 abstract class StickerCollectionRepository {
-  Future<StickerCollection> getByUserId(String userId);
+  Future<StickerCollection> getByUserId();
 
   Future<void> updateStickerCollection(String albumId, String stickerNumber,
       StickerType stickerType, OperationType operation);
