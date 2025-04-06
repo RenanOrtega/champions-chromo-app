@@ -1,4 +1,5 @@
 import 'package:champions_chromo_app/constants/api_constants.dart';
+import 'package:champions_chromo_app/data/models/pix/check/pix_check_model.dart';
 import 'package:champions_chromo_app/data/models/pix/extensions/pix_model_extension.dart';
 import 'package:champions_chromo_app/data/models/pix/pix_model.dart';
 import 'package:champions_chromo_app/domain/entities/customer_entity.dart';
@@ -31,12 +32,20 @@ class PixRepositoryImpl extends PixRepository {
         },
       );
       final dynamic data = response.data;
-      print(data);
-      var x = PixResponseModel.fromJson(data).toDomain();
-      print(x);
-      return x;
+      return PixResponseModel.fromJson(data).toDomain();
     } on DioException catch (e) {
       throw Exception('Failed to create pix: ${e.message}');
+    }
+  }
+
+  @override
+  Future<PixCheckModel> checkPix(String pixId) async {
+    try {
+      final response = await _abacatePayPixHttpClient
+          .get('${ApiConstants.pixBaseUrl}/pixQrCode/check');
+      return PixCheckModel.fromJson(response.data);
+    } on DioException catch (e) {
+      throw Exception('Failed to check pix: ${e.message}');
     }
   }
 }

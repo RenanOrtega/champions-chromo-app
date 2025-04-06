@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:convert';
+import 'dart:async';
 
 class CheckoutPage extends ConsumerStatefulWidget {
   const CheckoutPage({super.key});
@@ -26,6 +27,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
 
   int _currentStep = 0;
   String _selectedPaymentMethod = 'pix';
+  String? _pixId;
+  Timer? _pixStatusTimer;
+  String _pixStatus = 'PENDING';
 
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -39,6 +43,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     _emailController.dispose();
     _phoneController.dispose();
     _cpfController.dispose();
+    _pixStatusTimer?.cancel();
     super.dispose();
   }
 
@@ -53,8 +58,6 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
-
-        _createPixPayment();
       }
     } else if (_currentStep == 1) {
       if (_selectedPaymentMethod == 'pix') {
@@ -72,7 +75,16 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         _showOrderConfirmationDialog();
       }
     } else if (_currentStep == 2) {
-      _showOrderConfirmationDialog();
+      if (_pixStatus == 'CONFIRMED') {
+        _showOrderConfirmationDialog();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Aguarde a confirmação do pagamento PIX'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
   }
 
@@ -103,6 +115,52 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
           description,
           customer,
         );
+
+    // Start checking status after PIX creation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setupPixStatusCheck();
+    });
+  }
+
+  void _setupPixStatusCheck() {
+    // Cancel any existing timer
+    _pixStatusTimer?.cancel();
+
+    // Set up a timer to check PIX status every 5 seconds
+    _pixStatusTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      final pixState = ref.read(pixProvider);
+
+      if (pixState is AsyncData) {
+        final pixData = pixState.value;
+        if (pixData != null && pixData.data != null) {
+          // Store PIX ID if not already stored
+          if (_pixId == null) {
+            _pixId = pixData.data.id;
+          }
+
+          // Check PIX status if we have an ID
+          if (_pixId != null) {
+            ref.read(pixProvider.notifier).checkPix(_pixId!);
+
+            // Update status after check
+            final newPixState = ref.read(pixProvider);
+            if (newPixState is AsyncData &&
+                newPixState.value != null &&
+                newPixState.value.data != null) {
+              setState(() {
+                _pixStatus = newPixState.value.data.status ?? 'PENDING';
+              });
+
+              // If PIX is confirmed, cancel the timer and show confirmation
+              if (_pixStatus == 'CONFIRMED') {
+                timer.cancel();
+                _showOrderConfirmationDialog();
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
   void _previousStep() {
@@ -122,6 +180,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
   }
 
   void _showOrderConfirmationDialog() {
+    // Cancel the status check timer when order is confirmed
+    _pixStatusTimer?.cancel();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -279,7 +340,8 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
               ],
             ),
           ),
-          if (_currentStep < 2)
+          if (_currentStep < 2 ||
+              (_currentStep == 2 && _pixStatus != 'CONFIRMED'))
             Container(
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
@@ -324,20 +386,26 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       width: double.infinity,
                       height: 54,
                       child: ElevatedButton(
-                        onPressed: _nextStep,
+                        onPressed: _currentStep == 2 &&
+                                _pixStatus != 'CONFIRMED'
+                            ? null // Disable button while waiting for confirmation
+                            : _nextStep,
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
+                          disabledBackgroundColor: Colors.grey,
                         ),
                         child: Text(
                           _currentStep == 0
                               ? 'Continuar'
                               : _currentStep == 1
                                   ? 'Continuar'
-                                  : 'Finalizar Compra',
+                                  : _pixStatus == 'CONFIRMED'
+                                      ? 'Finalizar Compra'
+                                      : 'Aguardando Pagamento',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -537,8 +605,60 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
 
               final pix = pixResponse.data;
 
+              // Store pixId for status checking
+              if (_pixId == null && pix != null) {
+                _pixId = pix.id;
+              }
+
               return Column(
                 children: [
+                  // Payment Status Indicator
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(_pixStatus).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _getStatusColor(_pixStatus),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _getStatusIcon(_pixStatus),
+                          color: _getStatusColor(_pixStatus),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _getStatusTitle(_pixStatus),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: _getStatusColor(_pixStatus),
+                                ),
+                              ),
+                              Text(
+                                _getStatusDescription(_pixStatus),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: _getStatusColor(_pixStatus)
+                                      .withOpacity(0.8),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -660,6 +780,61 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
         ],
       ),
     );
+  }
+
+  // Helper methods for payment status
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'CONFIRMED':
+        return Colors.green;
+      case 'EXPIRED':
+      case 'FAILED':
+        return Colors.red;
+      case 'PENDING':
+      default:
+        return Colors.orange;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'CONFIRMED':
+        return Icons.check_circle;
+      case 'EXPIRED':
+      case 'FAILED':
+        return Icons.error;
+      case 'PENDING':
+      default:
+        return Icons.hourglass_top;
+    }
+  }
+
+  String _getStatusTitle(String status) {
+    switch (status) {
+      case 'CONFIRMED':
+        return 'Pagamento Confirmado';
+      case 'EXPIRED':
+        return 'Pagamento Expirado';
+      case 'FAILED':
+        return 'Pagamento Falhou';
+      case 'PENDING':
+      default:
+        return 'Aguardando Pagamento';
+    }
+  }
+
+  String _getStatusDescription(String status) {
+    switch (status) {
+      case 'CONFIRMED':
+        return 'Seu pagamento foi processado com sucesso.';
+      case 'EXPIRED':
+        return 'O prazo para pagamento expirou. Gere um novo código.';
+      case 'FAILED':
+        return 'Houve um problema com seu pagamento. Tente novamente.';
+      case 'PENDING':
+      default:
+        return 'Aguardando confirmação do seu pagamento PIX.';
+    }
   }
 
   Uint8List base64DecodeImage(Pix pix) {
